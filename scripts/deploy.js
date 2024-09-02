@@ -1,14 +1,15 @@
-const { ethers } = require("hardhat");
+const hre = require("hardhat");
 
 async function main() {
-  const BloodSupplyContract = await ethers.getContractFactory("BloodSupplyContract");
+  const BloodSupplyContract = await hre.ethers.getContractFactory("BloodSupplyContract");
   const deployedBloodSupplyContract = await BloodSupplyContract.deploy();
-  await deployedBloodSupplyContract.deployed();
-  console.log("BloodSupply Contract Address:-", deployedBloodSupplyContract.address);
+
+  await deployedBloodSupplyContract.waitForDeployment();
+
+  console.log("BloodSupply Contract Address:", await deployedBloodSupplyContract.getAddress());
 }
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  }); 
+
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

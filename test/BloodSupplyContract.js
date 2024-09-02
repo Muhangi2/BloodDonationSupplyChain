@@ -1,126 +1,119 @@
-const {
-  time,
-  loadFixture,
-} = require("@nomicfoundation/hardhat-toolbox/network-helpers");
-const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
-describe("Lock", function () {
-  // We define a fixture to reuse the same setup in every test.
-  // We use loadFixture to run this setup once, snapshot that state,
-  // and reset Hardhat Network to that snapshot in every test.
-  async function deployOneYearLockFixture() {
-    const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-    const ONE_GWEI = 1_000_000_000;
+describe("BloodSupply Contract", function () {
+  let BloodSupply, bloodSupply, owner, addr1, addr2, addr3, addr4;
 
-    const lockedAmount = ONE_GWEI;
-    const unlockTime = (await time.latest()) + ONE_YEAR_IN_SECS;
-
-    // Contracts are deployed using the first signer/account by default
-    const [owner, otherAccount] = await ethers.getSigners();
-
-    const Lock = await ethers.getContractFactory("Lock");
-    const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-    return { lock, unlockTime, lockedAmount, owner, otherAccount };
-  }
+  beforeEach(async function () {
+    [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
+    BloodSupply = await ethers.getContractFactory("BloodSupplyContract");
+    bloodSupply = await BloodSupply.deploy();
+    await bloodSupply.waitForDeployment();
+  });
 
   describe("Deployment", function () {
-    it("Should set the right unlockTime", async function () {
-      const { lock, unlockTime } = await loadFixture(deployOneYearLockFixture);
-
-      expect(await lock.unlockTime()).to.equal(unlockTime);
-    });
-
-    it("Should set the right owner", async function () {
-      const { lock, owner } = await loadFixture(deployOneYearLockFixture);
-
-      expect(await lock.owner()).to.equal(owner.address);
-    });
-
-    it("Should receive and store the funds to lock", async function () {
-      const { lock, lockedAmount } = await loadFixture(
-        deployOneYearLockFixture
-      );
-
-      expect(await ethers.provider.getBalance(lock.target)).to.equal(
-        lockedAmount
-      );
-    });
-
-    it("Should fail if the unlockTime is not in the future", async function () {
-      // We don't use the fixture here because we want a different deployment
-      const latestTime = await time.latest();
-      const Lock = await ethers.getContractFactory("Lock");
-      await expect(Lock.deploy(latestTime, { value: 1 })).to.be.revertedWith(
-        "Unlock time should be in the future"
-      );
+    it("Should deploy successfully", async function () {
+      expect(await bloodSupply.getAddress()).to.be.properAddress;
+      console.log("Deployed Contract Address:", await bloodSupply.getAddress());
     });
   });
 
-  describe("Withdrawals", function () {
-    describe("Validations", function () {
-      it("Should revert with the right error if called too soon", async function () {
-        const { lock } = await loadFixture(deployOneYearLockFixture);
-
-        await expect(lock.withdraw()).to.be.revertedWith(
-          "You can't withdraw yet"
-        );
-      });
-
-      it("Should revert with the right error if called from another account", async function () {
-        const { lock, unlockTime, otherAccount } = await loadFixture(
-          deployOneYearLockFixture
-        );
-
-        // We can increase the time in Hardhat Network
-        await time.increaseTo(unlockTime);
-
-        // We use lock.connect() to send a transaction from another account
-        await expect(lock.connect(otherAccount).withdraw()).to.be.revertedWith(
-          "You aren't the owner"
-        );
-      });
-
-      it("Shouldn't fail if the unlockTime has arrived and the owner calls it", async function () {
-        const { lock, unlockTime } = await loadFixture(
-          deployOneYearLockFixture
-        );
-
-        // Transactions are sent using the first signer by default
-        await time.increaseTo(unlockTime);
-
-        await expect(lock.withdraw()).not.to.be.reverted;
-      });
+  describe("Hospital Management", function () {
+    beforeEach(async function () {
+      await bloodSupply.addHospital(addr2.address, "Norvic Hospital", 9016711000);
+      await bloodSupply.addHospital(addr3.address, "Bir Hospital", 9016711111);
     });
 
-    describe("Events", function () {
-      it("Should emit an event on withdrawals", async function () {
-        const { lock, unlockTime, lockedAmount } = await loadFixture(
-          deployOneYearLockFixture
-        );
+    it("Should add hospitals correctly", async function () {
+      const hospitalList = await bloodSupply.getDataOfHospitals();
+      expect(hospitalList[0].hospitalAddress).to.equal(addr2.address);
+      expect(hospitalList[0].hospitalName).to.equal("Norvic Hospital");
+      expect(hospitalList[0].phoneNumber).to.equal(9016711000);
+      expect(hospitalList[1].hospitalAddress).to.equal(addr3.address);
+      expect(hospitalList[1].hospitalName).to.equal("Bir Hospital");
+      expect(hospitalList[1].phoneNumber).to.equal(9016711111);
+    });
+  });
 
-        await time.increaseTo(unlockTime);
-
-        await expect(lock.withdraw())
-          .to.emit(lock, "Withdrawal")
-          .withArgs(lockedAmount, anyValue); // We accept any value as `when` arg
-      });
+  describe("Supplier Management", function () {
+    beforeEach(async function () {
+      await bloodSupply.addSupplier(addr2.address, "Lions club", 9816711000);
+      await bloodSupply.addSupplier(addr3.address, "Luis blood suppliers", 9816713333);
     });
 
-    describe("Transfers", function () {
-      it("Should transfer the funds to the owner", async function () {
-        const { lock, unlockTime, lockedAmount, owner } = await loadFixture(
-          deployOneYearLockFixture
-        );
+    it("Should add suppliers correctly", async function () {
+      const suppliersList = await bloodSupply.getDataOfSuppliers();
+      expect(suppliersList[0].supplierAddress).to.equal(addr2.address);
+      expect(suppliersList[0].organizationName).to.equal("Lions club");
+      expect(suppliersList[0].phoneNumber).to.equal(9816711000);
+      expect(suppliersList[1].supplierAddress).to.equal(addr3.address);
+      expect(suppliersList[1].organizationName).to.equal("Luis blood suppliers");
+      expect(suppliersList[1].phoneNumber).to.equal(9816713333);
+    });
+  });
 
-        await time.increaseTo(unlockTime);
+  describe("Blood Management", function () {
+    beforeEach(async function () {
+      await bloodSupply.addSupplier(addr2.address, "Tiger club", 9816713333);
+    });
 
-        await expect(lock.withdraw()).to.changeEtherBalances(
-          [owner, lock],
-          [lockedAmount, -lockedAmount]
-        );
-      });
+    it("Should add blood correctly", async function () {
+      await bloodSupply.connect(addr2).addBlood("Subash panthi", 24, "male", "teku", "0+ve", 800);
+      const donorDetails = await bloodSupply.getDataOfDonors();
+      expect(donorDetails[0].donorName).to.equal("Subash panthi");
+      expect(donorDetails[0].age).to.equal(24);
+      expect(donorDetails[0].gender).to.equal("male");
+
+      const bloodDetails = await bloodSupply.getDataOfBlood();
+      expect(bloodDetails[0].bloodUniqueId).to.equal(0);
+      expect(bloodDetails[0].bloodGroup).to.equal("0+ve");
+    });
+
+    it("Should ship blood correctly", async function () {
+      await bloodSupply.addHospital(addr3.address, "Bir Hospital", 9016713300);
+      await bloodSupply.connect(addr2).addBlood("Subash panthi", 24, "male", "teku", "A+ve", 800);
+      await bloodSupply.connect(addr2).shipBloodToHospital(0, addr3.address);
+      expect(await bloodSupply.getBloodStatus(0)).to.equal("Shipped");
+    });
+
+    it("Should give blood to patients correctly", async function () {
+      await bloodSupply.addHospital(addr3.address, "Bir Hospital", 9016713311);
+      await bloodSupply.connect(addr2).addBlood("Subash panthi", 24, "male", "teku", "A+ve", 800);
+      await bloodSupply.connect(addr2).shipBloodToHospital(0, addr3.address);
+      await bloodSupply.connect(addr3).giveBloodToPatients(0, "aman", 24, "ktm", "A+ve");
+      const patientsList = await bloodSupply.getDataOfPatients();
+      expect(patientsList[0].patientName).to.equal("aman");
+      expect(patientsList[0].age).to.equal(24);
+      expect(await bloodSupply.getBloodStatus(0)).to.equal("Fulfilled");
+    });
+  });
+
+  describe("Access Control", function () {
+    it("Should revert when non-owner tries to add supplier", async function () {
+      await expect(bloodSupply.connect(addr2).addSupplier(addr3.address, "Luis blood suppliers", 9016713300))
+        .to.be.revertedWith("you are not a Owner !!");
+    });
+
+    it("Should revert when non-owner tries to add hospital", async function () {
+      await expect(bloodSupply.connect(addr2).addHospital(addr3.address, "Bir Hospital", 9016713300))
+        .to.be.revertedWith("you are not a Owner !!");
+    });
+
+    it("Should revert when non-owner tries to get donor data", async function () {
+      await expect(bloodSupply.connect(addr3).getDataOfDonors())
+        .to.be.revertedWith("you are not a Owner !!");
+    });
+
+    it("Should revert when non-supplier tries to add blood", async function () {
+      await expect(bloodSupply.connect(addr1).addBlood("luis roy", 34, "male", "Usa", "0+ve", 800))
+        .to.be.revertedWith("You are not a Authorized Supplier !!");
+    });
+
+    it("Should revert when shipping to non-listed hospital", async function () {
+      await bloodSupply.addSupplier(addr1.address, "Luis blood suppliers", 9016666666);
+      await bloodSupply.connect(addr1).addBlood("Subash panthi", 24, "male", "teku", "A+ve", 800);
+      await expect(bloodSupply.connect(addr1).shipBloodToHospital(0, addr2.address))
+        .to.be.revertedWith('No permision to Ship Blood Here !!');
     });
   });
 });
