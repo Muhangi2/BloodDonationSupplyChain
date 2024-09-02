@@ -4,12 +4,13 @@ pragma solidity ^0.8.24;
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
  
- import  "./lib/Events.sol"
- import  "./lib/Modifiers.sol"
- import "./lib/DataStructs.sol"
 
+ import "./lib/DataStructs.sol";
+ import  "./lib/Events.sol";
+ import  "./lib/Modifiers.sol";
+ 
 
-contract BloodSupplyContract is DataStructure, Events, Modifiers {
+contract BloodSupplyContract is DataStructs, Events, Modifiers {
     constructor() {
         owner = msg.sender;
     }

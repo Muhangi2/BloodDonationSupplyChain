@@ -4,7 +4,7 @@ pragma solidity ^0.8.24;
 
 
 
-contract DataStructure {
+contract DataStructs {
     address public owner;
     uint256 internal supplierId;
     uint256 internal hospitalId;

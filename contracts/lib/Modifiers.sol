@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-import "./DataStructs.sol"
+import "./DataStructs.sol";
 
-contract Modifiers is DataStructure {
+contract Modifiers is DataStructs {
     modifier checkOwner(address _owner) {
         require(_owner == owner, "you are not a Owner !!");
         _;
