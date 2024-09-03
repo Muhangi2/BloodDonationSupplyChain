@@ -26,12 +26,14 @@ describe("BloodSupply Contract", function () {
 
     it("Should add hospitals correctly", async function () {
       const hospitalList = await bloodSupply.getDataOfHospitals();
+    
       expect(hospitalList[0].hospitalAddress).to.equal(addr2.address);
-      expect(hospitalList[0].hospitalName).to.equal("Norvic Hospital");
+      expect(hospitalList[0].hospital_name).to.equal("Norvic Hospital");
       expect(hospitalList[0].phoneNumber).to.equal(9016711000);
       expect(hospitalList[1].hospitalAddress).to.equal(addr3.address);
-      expect(hospitalList[1].hospitalName).to.equal("Bir Hospital");
+      expect(hospitalList[1].hospital_name).to.equal("Bir Hospital");
       expect(hospitalList[1].phoneNumber).to.equal(9016711111);
+      
     });
   });
 
