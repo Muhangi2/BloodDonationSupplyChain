@@ -9,11 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@coinbase/onchainkit": "^0.31.4",
     "@reduxjs/toolkit": "^2.2.7",
     "@tanstack/react-query": "^5.53.2",
     "@web3modal/wagmi": "^5.1.4",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.2",
+    "lucide-react": "^0.439.0",
     "next": "14.2.7",
     "react": "^18",
     "react-dom": "^18",
