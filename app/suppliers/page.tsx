@@ -70,11 +70,11 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
 
   const renderAddSupplier = () => (
     <div className="mt-8 bg-white shadow rounded-lg p-6">
-      <h2 className="text-xl font-semibold mb-4">Add Supplier</h2>
+      <h2 className="text-xl font-semibold mb-4">Add Donor</h2>
       <form action={handleAddSupplier} className="space-y-4">
         <input
           type="text"
-          placeholder="Supplier Address"
+          placeholder="Donor Address"
           name='supplierAddress'
           value={newSupplier.supplierAddress}
           onChange={(e) => setNewSupplier({...newSupplier, supplierAddress: e.target.value})}
@@ -82,7 +82,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
         />
         <input
           type="text"
-          placeholder="Supplier Name"
+          placeholder="Donor Name"
           name='supplierName'
           value={newSupplier.supplierName}
           onChange={(e) => setNewSupplier({...newSupplier, supplierName: e.target.value})}
@@ -96,7 +96,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
           onChange={(e) => setNewSupplier({...newSupplier, phoneNumber: e.target.value})}
           className="w-full p-2 border rounded"
         />
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Add Supplier</button>
+        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Add Donor</button>
       </form>
     </div>
   );
@@ -112,18 +112,13 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
           onChange={(e) => setShipBloodData({...shipBloodData, bloodId: e.target.value})}
           className="w-full p-2 border rounded"
         />
-        <select
-          value={shipBloodData.hospitalAddress}
-          onChange={(e) => setShipBloodData({...shipBloodData, hospitalAddress: e.target.value})}
+        <input
+          type="text"
+          placeholder="Hospital Address"
+          value={shipBloodData.bloodId}
+          onChange={(e) => setShipBloodData({...shipBloodData, bloodId: e.target.value})}
           className="w-full p-2 border rounded"
-        >
-          <option value="">Select Hospital</option>
-          {hospitals.map((hospital) => (
-            <option key={hospital.hospitalAddress} value={hospital.hospitalAddress}>
-              {hospital.hospitalName}
-            </option>
-          ))}
-        </select>
+        />
         <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Ship Blood</button>
       </form>
     </div>
@@ -150,7 +145,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
                 >
-                  {tab === 'addSupplier' ? 'Add Supplier' : 'Ship Blood'}
+                  {tab === 'addSupplier' ? 'Add Donor' : 'Ship Blood'}
                 </button>
               ))}
             </nav>
