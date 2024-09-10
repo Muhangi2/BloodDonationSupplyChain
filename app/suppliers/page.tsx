@@ -4,17 +4,10 @@ import { ethers } from 'ethers';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Droplet, TrendingUp, Users, AlertCircle } from 'lucide-react';
 import { BloodSupplyContract, Supplier, Hospital, Donor, Patient, BloodDetails } from '@/utils/types.dt'; 
-
 import { handleAddHospital, handleAddsupplier } from '../lib/actions';
+import { getDataOfHospitals ,getDataOfDonors} from '@/services/blockchain';
 
-const mockData = [
-  { name: 'Jan', donations: 400 },
-  { name: 'Feb', donations: 300 },
-  { name: 'Mar', donations: 500 },
-  { name: 'Apr', donations: 280 },
-  { name: 'May', donations: 390 },
-  { name: 'Jun', donations: 430 },
-];
+
 
 interface DashboardProps {
   contract: BloodSupplyContract;
@@ -24,7 +17,6 @@ interface DashboardProps {
 export default function SupplierDashboard({ contract, account }: DashboardProps) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [bloodData, setBloodData] = useState<BloodDetails[]>([]);
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [donors, setDonors] = useState<Donor[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -38,11 +30,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
     bloodVolume: 0
   });
 
-  const [newSupplier, setNewSupplier] = useState({
-    supplierAddress: '',
-    supplierName: '',
-    phoneNumber: ''
-  });
+ 
 
   const [newHospital, setNewHospital] = useState({
     hospitalAddress: '',
@@ -52,69 +40,16 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
 
   useEffect(() => {
     const fetchData = async () => {
-      const bloodData = await contract.getDataOfBlood();
-      const suppliersData = await contract.getDataOfSuppliers();
-      const hospitalsData = await contract.getDataOfHospitals();
-      const donorsData = await contract.getDataOfDonors();
-      const patientsData = await contract.getDataOfPatients();
+      const hospitalsData = await getDataOfHospitals();
+      const donorsData = await getDataOfDonors()
       
       setBloodData(bloodData);
-      setSuppliers(suppliersData);
+      
       setHospitals(hospitalsData);
       setDonors(donorsData);
-      setPatients(patientsData);
     };
     fetchData();
   }, [contract]);
-
-  const handleAddBlood = async (e: React.FormEvent) => {
-    e.preventDefault();
- 
-    try {
-      await contract.addBlood(
-        newBlood.donorName,
-        ethers.BigNumber.from(newBlood.age),
-        newBlood.gender,
-        newBlood.address,
-        newBlood.bloodGroup,
-        ethers.BigNumber.from(newBlood.bloodVolume)
-      );
-      const updatedBloodData = await contract.getDataOfBlood();
-      setBloodData(updatedBloodData);
-      setNewBlood({
-        donorName: '',
-        age: 0,
-        gender: '',
-        address: '',
-        bloodGroup: '',
-        bloodVolume: 0
-      });
-    } catch (error) {
-      console.error("Error adding blood:", error);
-    }
-  };
-
-  // const handleAddSupplier = async (e: React.FormEvent) => {
-  //   console.log(e,"event details")
-  //   e.preventDefault();
-  //   // console.log(e,"event details")
-  //   try {
-  //     await addSupplier(
-  //       newSupplier.supplierAddress,
-  //       newSupplier.supplierName,
-  //       ethers.BigNumber.from(newSupplier.phoneNumber)
-  //     );
-  //     const updatedSuppliersData = await contract.getDataOfSuppliers();
-  //     setSuppliers(updatedSuppliersData);
-  //     setNewSupplier({
-  //       supplierAddress: '',
-  //       supplierName: '',
-  //       phoneNumber: ''
-  //     });
-  //   } catch (error) {
-  //     console.error("Error adding supplier:", error);
-  //   }
-  // };
 
  
 
@@ -192,23 +127,6 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
             ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Monthly Donations Chart */}
-      <div className="mt-8">
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Monthly Donations</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={mockData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="donations" fill="#EF4444" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
       </div>
     </>
   );
@@ -345,8 +263,6 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
     switch (activeTab) {
       case 'dashboard':
         return renderDashboard();
-      case 'addSuppliers':
-        return renderAddSuppliers();
       case 'addHospitals':
         return renderAddHospitals();
       case 'viewDonors':
