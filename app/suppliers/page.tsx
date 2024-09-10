@@ -69,7 +69,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   };
 
   const renderAddSupplier = () => (
-    <div className="mt-8 bg-white shadow rounded-lg p-6">
+    <div className="mt-8 bg-white dark:bg-slate-900 shadow rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">Add Donor</h2>
       <form action={handleAddSupplier} className="space-y-4">
         <input
@@ -102,7 +102,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   );
 
   const renderShipBlood = () => (
-    <div className="mt-8 bg-white shadow rounded-lg p-6">
+    <div className="mt-8 bg-white dark:bg-slate-900 shadow rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">Ship Blood</h2>
       <form onSubmit={handleShipBlood} className="space-y-4">
         <input
@@ -125,12 +125,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   );
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Supplier Dashboard</h1>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-800">
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="border-b border-gray-200">
