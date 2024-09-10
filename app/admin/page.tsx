@@ -147,21 +147,21 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   const renderDashboard = () => (
     <>
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mt-5">
         {[
           { title: 'Total Donations', value: bloodData.length.toString(), icon: <Droplet className="h-6 w-6 text-red-600" /> },
           { title: 'Active Donors', value: donors.length.toString(), icon: <Users className="h-6 w-6 text-blue-600" /> },
           { title: 'Hospitals', value: hospitals.length.toString(), icon: <TrendingUp className="h-6 w-6 text-green-600" /> },
           { title: 'Patients', value: patients.length.toString(), icon: <AlertCircle className="h-6 w-6 text-yellow-600" /> },
         ].map((item) => (
-          <div key={item.title} className="bg-white overflow-hidden shadow rounded-lg">
+          <div key={item.title} className="bg-white overflow-hidden shadow rounded-lg dark:bg-gray-900">
             <div className="p-5">
               <div className="flex items-center">
                 <div className="flex-shrink-0">{item.icon}</div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
                     <dt className="text-sm font-medium text-gray-500 truncate">{item.title}</dt>
-                    <dd className="text-2xl font-semibold text-gray-900">{item.value}</dd>
+                    <dd className="text-2xl font-semibold text-gray-900 dark:text-gray-100">{item.value}</dd>
                   </dl>
                 </div>
               </div>
@@ -173,44 +173,46 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
       {/* Add Blood Form */}
 
       {/* Blood Inventory */}
-      <div className="mt-8 bg-white shadow rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Blood Inventory</h2>
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blood Group</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donated Time</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {bloodData.map((blood) => (
-              <tr key={blood.bloodUniqueId.toString()}>
-                <td className="px-6 py-4 whitespace-nowrap">{blood.bloodUniqueId.toString()}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{blood.bloodGroup}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{new Date(blood.donatedTime.toNumber() * 1000).toLocaleString()}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{blood.currentStatus}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <button 
-                    onClick={() => handleShipBlood(blood.bloodUniqueId.toNumber(), hospitals[0]?.hospitalAddress || "")}
-                    className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-                    disabled={blood.currentStatus !== "Active"}
-                  >
-                    Ship to Hospital
-                  </button>
-                </td>
+      <div className="mt-8 bg-white shadow rounded-lg p-6 dark:bg-slate-900">
+        <h2 className="text-xl font-semibold mb-4 dark:text-gray-100">Blood Inventory</h2>
+        <div className="relative overflow-x-auto">
+          <table className="w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50 dark:bg-slate-600">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">ID</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Blood Group</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Donated Time</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white dark:bg-slate-700 divide-y divide-gray-200">
+              {bloodData.map((blood) => (
+                <tr key={blood.bloodUniqueId.toString()}>
+                  <td className="px-6 py-4 whitespace-nowrap">{blood.bloodUniqueId.toString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{blood.bloodGroup}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{new Date(blood.donatedTime.toNumber() * 1000).toLocaleString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{blood.currentStatus}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <button 
+                      onClick={() => handleShipBlood(blood.bloodUniqueId.toNumber(), hospitals[0]?.hospitalAddress || "")}
+                      className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+                      disabled={blood.currentStatus !== "Active"}
+                    >
+                      Ship to Hospital
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Monthly Donations Chart */}
       <div className="mt-8">
-        <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">Monthly Donations</h2>
+        <div className="bg-white shadow rounded-lg p-6 dark:bg-slate-900">
+          <h2 className="text-xl font-semibold mb-4 dark:bg-slate-900">Monthly Donations</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={mockData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -227,7 +229,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   );
 
   const renderAddSuppliers = () => (
-    <div className="mt-8 bg-white shadow rounded-lg p-6">
+    <div className="mt-8 bg-white dark:bg-slate-900 shadow rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">Add Supplier</h2>
       <form onSubmit={handleAddSupplier} className="space-y-4">
         <input
@@ -257,7 +259,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   );
 
   const renderAddHospitals = () => (
-    <div className="mt-8 bg-white shadow rounded-lg p-6">
+    <div className="mt-8 bg-white dark:bg-slate-900 shadow rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">Add Hospital</h2>
       <form onSubmit={handleAddHospital} className="space-y-4">
         <input
@@ -287,64 +289,68 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   );
 
   const renderViewDonors = () => (
-    <div className="mt-8 bg-white shadow rounded-lg p-6">
+    <div className="mt-8 bg-white dark:bg-slate-900 shadow rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">View Donors</h2>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blood Group</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blood Volume</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donation Date</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {donors.map((donor, index) => (
-            <tr key={index}>
-              <td className="px-6 py-4 whitespace-nowrap">{donor.donorName}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{donor.age.toString()}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{donor.gender}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{donor.Address}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{donor.bloodGroup}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{donor.bloodVolume.toString()}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{new Date(donor.donatedTime.toNumber() * 1000).toLocaleString()}</td>
+      <div className="relative overflow-x-auto">
+        <table className="w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50 dark:bg-slate-600">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Age</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Gender</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Address</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Blood Group</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Blood Volume</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Donation Date</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white dark:bg-slate-700 divide-y divide-gray-200">
+            {donors.map((donor, index) => (
+              <tr key={index}>
+                <td className="px-6 py-4 whitespace-nowrap">{donor.donorName}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{donor.age.toString()}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{donor.gender}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{donor.Address}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{donor.bloodGroup}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{donor.bloodVolume.toString()}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{new Date(donor.donatedTime.toNumber() * 1000).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 
   const renderViewPatients = () => (
-    <div className="mt-8 bg-white shadow rounded-lg p-6">
+    <div className="mt-8 bg-white dark:bg-slate-900 shadow rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">View Patients</h2>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Blood Group</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Used Blood ID</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Used Time</th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {patients.map((patient, index) => (
-            <tr key={index}>
-              <td className="px-6 py-4 whitespace-nowrap">{patient.patientName}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{patient.age.toString()}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{patient.Address}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{patient.bloodGroup}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{patient.usedBloodId.toString()}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{new Date(patient.usedTime.toNumber() * 1000).toLocaleString()}</td>
+      <div className="relative overflow-x-auto">
+        <table className="w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50 dark:bg-slate-600">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Name</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Age</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Address</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Blood Group</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Used Blood ID</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-100 uppercase tracking-wider">Used Time</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white dark:bg-slate-700 divide-y divide-gray-200">
+            {patients.map((patient, index) => (
+              <tr key={index}>
+                <td className="px-6 py-4 whitespace-nowrap">{patient.patientName}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{patient.age.toString()}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{patient.Address}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{patient.bloodGroup}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{patient.usedBloodId.toString()}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{new Date(patient.usedTime.toNumber() * 1000).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 
@@ -366,17 +372,12 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        </div>
-      </header>
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-800">
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           {/* Tabs */}
           <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+            <nav className="-mb-px flex space-x-8 overflow-auto" aria-label="Tabs">
               {['dashboard', 'addSuppliers', 'addHospitals', 'viewDonors', 'viewPatients'].map((tab) => (
                 <button
                   key={tab}
