@@ -18,10 +18,13 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [newSupplier, setNewSupplier] = useState<Supplier>({
-    supplierAddress: '',
-    supplierName: '',
-    phoneNumber: ''
+    const [newDonor, setNewDonor] = useState({
+    donorName: '',
+    age: '',
+    gender: '',
+    address: '',
+    bloodGroup: '',
+    bloodVolume: ''
   });
 
   const [shipBloodData, setShipBloodData] = useState({
@@ -76,24 +79,24 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
           type="text"
           placeholder="Donor Address"
           name='supplierAddress'
-          value={newSupplier.supplierAddress}
-          onChange={(e) => setNewSupplier({...newSupplier, supplierAddress: e.target.value})}
+          value={newDonor.supplierAddress}
+          onChange={(e) => setnewDonor({...newDonor, supplierAddress: e.target.value})}
           className="w-full p-2 border rounded"
         />
         <input
           type="text"
           placeholder="Donor Name"
           name='supplierName'
-          value={newSupplier.supplierName}
-          onChange={(e) => setNewSupplier({...newSupplier, supplierName: e.target.value})}
+          value={newDonor.supplierName}
+          onChange={(e) => setnewDonor({...newDonor, supplierName: e.target.value})}
           className="w-full p-2 border rounded"
         />
         <input
           type="tel"
           placeholder="Phone Number"
           name='phoneNumber'
-          value={newSupplier.phoneNumber}
-          onChange={(e) => setNewSupplier({...newSupplier, phoneNumber: e.target.value})}
+          value={newDonor.phoneNumber}
+          onChange={(e) => setnewDonor({...newDonor, phoneNumber: e.target.value})}
           className="w-full p-2 border rounded"
         />
         <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">Add Donor</button>

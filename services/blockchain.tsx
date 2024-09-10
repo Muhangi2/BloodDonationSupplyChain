@@ -19,29 +19,29 @@ console.log(ethereum,"ethereum")
 // Get Ethereum contracts
 
 const getEthereumContracts = async () => {
-    // const provider = new ethers.providers.Web3Provider(ethereum);
-    // const signer = provider.getSigner();
-    // const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
   
-    // return contract ;
+    return contract ;
 
 
-    const accounts = await ethereum?.request?.({ method: 'eth_accounts' })
+    // const accounts = await ethereum?.request?.({ method: 'eth_accounts' })
 
-    if (accounts?.length > 0) {
-      const provider = new ethers.providers.Web3Provider(ethereum)
-      const signer =  provider.getSigner()
-      const contracts = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer)
+    // if (accounts?.length > 0) {
+    //   const provider = new ethers.providers.Web3Provider(ethereum)
+    //   const signer =  provider.getSigner()
+    //   const contracts = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer)
   
-      return contracts
-    } else {
-      const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL)
-      const wallet = ethers.Wallet.createRandom()
-      const signer = wallet.connect(provider)
-      const contracts = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer)
+    //   return contracts
+    // } else {
+    //   const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL)
+    //   const wallet = ethers.Wallet.createRandom()
+    //   const signer = wallet.connect(provider)
+    //   const contracts = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer)
   
-      return contracts
-    }
+    //   return contracts
+    // }
   
 }
 
