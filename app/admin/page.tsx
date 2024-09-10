@@ -5,6 +5,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import { Droplet, TrendingUp, Users, AlertCircle } from 'lucide-react';
 import { BloodSupplyContract, Supplier, Hospital, Donor, Patient, BloodDetails } from '@/utils/types.dt'; 
 
+import { handleAddHospital, handleAddsupplier } from '../lib/actions';
+
 const mockData = [
   { name: 'Jan', donations: 400 },
   { name: 'Feb', donations: 300 },
@@ -67,6 +69,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
 
   const handleAddBlood = async (e: React.FormEvent) => {
     e.preventDefault();
+ 
     try {
       await contract.addBlood(
         newBlood.donorName,
@@ -91,45 +94,29 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
     }
   };
 
-  const handleAddSupplier = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await contract.addSupplier(
-        newSupplier.supplierAddress,
-        newSupplier.supplierName,
-        ethers.BigNumber.from(newSupplier.phoneNumber)
-      );
-      const updatedSuppliersData = await contract.getDataOfSuppliers();
-      setSuppliers(updatedSuppliersData);
-      setNewSupplier({
-        supplierAddress: '',
-        supplierName: '',
-        phoneNumber: ''
-      });
-    } catch (error) {
-      console.error("Error adding supplier:", error);
-    }
-  };
+  // const handleAddSupplier = async (e: React.FormEvent) => {
+  //   console.log(e,"event details")
+  //   e.preventDefault();
+  //   // console.log(e,"event details")
+  //   try {
+  //     await addSupplier(
+  //       newSupplier.supplierAddress,
+  //       newSupplier.supplierName,
+  //       ethers.BigNumber.from(newSupplier.phoneNumber)
+  //     );
+  //     const updatedSuppliersData = await contract.getDataOfSuppliers();
+  //     setSuppliers(updatedSuppliersData);
+  //     setNewSupplier({
+  //       supplierAddress: '',
+  //       supplierName: '',
+  //       phoneNumber: ''
+  //     });
+  //   } catch (error) {
+  //     console.error("Error adding supplier:", error);
+  //   }
+  // };
 
-  const handleAddHospital = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      await contract.addHospital(
-        newHospital.hospitalAddress,
-        newHospital.hospitalName,
-        ethers.BigNumber.from(newHospital.phoneNumber)
-      );
-      const updatedHospitalsData = await contract.getDataOfHospitals();
-      setHospitals(updatedHospitalsData);
-      setNewHospital({
-        hospitalAddress: '',
-        hospitalName: '',
-        phoneNumber: ''
-      });
-    } catch (error) {
-      console.error("Error adding hospital:", error);
-    }
-  };
+ 
 
   const handleShipBlood = async (bloodId: number, hospitalAddress: string) => {
     try {
@@ -231,10 +218,11 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   const renderAddSuppliers = () => (
     <div className="mt-8 bg-white dark:bg-slate-900 shadow rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">Add Supplier</h2>
-      <form onSubmit={handleAddSupplier} className="space-y-4">
+      <form action={handleAddsupplier} className="space-y-4">
         <input
           type="text"
-          placeholder="Supplier Address"
+          placeholder="SuppliersupplierAddress Address"
+          name='supplierAddress'
           value={newSupplier.supplierAddress}
           onChange={(e) => setNewSupplier({...newSupplier, supplierAddress: e.target.value})}
           className="w-full p-2 border rounded"
@@ -242,6 +230,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
         <input
           type="text"
           placeholder="Supplier Name"
+          name='supplierName'
           value={newSupplier.supplierName}
           onChange={(e) => setNewSupplier({...newSupplier, supplierName: e.target.value})}
           className="w-full p-2 border rounded"
@@ -249,6 +238,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
         <input
           type="tel"
           placeholder="Phone Number"
+          name='phoneNumber'
           value={newSupplier.phoneNumber}
           onChange={(e) => setNewSupplier({...newSupplier, phoneNumber: e.target.value})}
           className="w-full p-2 border rounded"
@@ -261,10 +251,11 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
   const renderAddHospitals = () => (
     <div className="mt-8 bg-white dark:bg-slate-900 shadow rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">Add Hospital</h2>
-      <form onSubmit={handleAddHospital} className="space-y-4">
+      <form action={handleAddHospital} className="space-y-4">
         <input
           type="text"
           placeholder="Hospital Address"
+          name="hospitalAddress"
           value={newHospital.hospitalAddress}
           onChange={(e) => setNewHospital({...newHospital, hospitalAddress: e.target.value})}
           className="w-full p-2 border rounded"
@@ -272,6 +263,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
         <input
           type="text"
           placeholder="Hospital Name"
+          name="hospitalName"
           value={newHospital.hospitalName}
           onChange={(e) => setNewHospital({...newHospital, hospitalName: e.target.value})}
           className="w-full p-2 border rounded"
@@ -279,6 +271,7 @@ export default function SupplierDashboard({ contract, account }: DashboardProps)
         <input
           type="tel"
           placeholder="Phone Number"
+          name="phoneNumber"
           value={newHospital.phoneNumber}
           onChange={(e) => setNewHospital({...newHospital, phoneNumber: e.target.value})}
           className="w-full p-2 border rounded"
