@@ -1,6 +1,7 @@
 import {ethers} from 'ethers'
 import { CONTRACT_ADDRESS } from '@/context/constants'
 import { CONTRACT_ABI } from '@/context/constants'
+import { Donor,BloodDetails,Supplier,Hospital ,Patient,BloodSupplyContract,} from '@/utils/types.dt'
 
 const toWei = (num: number) => ethers.parseEther(num.toString())
 const fromWei = (num: number) => ethers.formatEther(num)
